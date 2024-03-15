@@ -1,3 +1,6 @@
+from copy import copy
+from decimal import Decimal
+
 from django.shortcuts import render
 
 DATA = {
@@ -28,3 +31,14 @@ DATA = {
 #     'ингредиент2': количество2,
 #   }
 # }
+def recipe_view(request):
+    servings = int(request.GET.get('servings', 1))
+    dish = request.path[1:-1]
+    recipe = copy(DATA[dish])
+    for key in recipe:
+        recipe[key] = Decimal(str(recipe[key])) * servings
+    context = {
+        'recipe': recipe
+    }
+    return render(request, 'calculator/index.html', context)
+
